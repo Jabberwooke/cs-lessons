@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Data Structures: Lists, Tuples, Libraries, Stacks & Queues</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #eeecea;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.13);
+    --text: #1c1b18;
+    --text2: #5c5a55;
+    --text3: #9a9890;
+    --blue: #1d4ed8;   --blue-bg: #dbeafe;   --blue-mid: #93c5fd;
+    --green: #15803d;  --green-bg: #dcfce7;  --green-mid: #86efac;
+    --amber: #92400e;  --amber-bg: #fef3c7;  --amber-mid: #fcd34d;
+    --purple: #6d28d9; --purple-bg: #ede9fe; --purple-mid: #c4b5fd;
+    --rose: #9f1239;   --rose-bg: #ffe4e6;   --rose-mid: #fda4af;
+    --teal: #0f766e;   --teal-bg: #ccfbf1;   --teal-mid: #5eead4;
+    --dark: #111827;
+    --accent: #f59e0b;
+    --radius: 12px;
+    --font: 'DM Sans', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  .page { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--dark);
+    border-radius: 20px;
+    padding: 3rem 2.5rem 2.5rem;
+    margin-bottom: 2.5rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-deco {
+    position: absolute; pointer-events: none;
+  }
+  .hero-deco.d1 { top:-30px; right:-30px; width:180px; height:180px; border-radius:50%; border:28px solid rgba(251,191,36,0.08); }
+  .hero-deco.d2 { bottom:-20px; left:20%; width:130px; height:130px; border-radius:50%; border:20px solid rgba(167,243,208,0.06); }
+  .hero-deco.d3 { top:40px; right:120px; width:70px; height:70px; border-radius:50%; border:12px solid rgba(196,181,253,0.07); }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(251,191,36,0.14); color: #fbbf24;
+    font-size: 10px; font-weight: 600;
+    padding: 4px 13px; border-radius: 20px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid rgba(251,191,36,0.22); margin-bottom: 1.1rem;
+  }
+  .hero h1 { font-size: clamp(22px,4vw,30px); font-weight: 600; color: #f9fafb; line-height: 1.25; margin-bottom: 0.8rem; }
+  .hero p { font-size: 14px; color: #9ca3af; line-height: 1.75; max-width: 600px; }
+  .hero-meta { display: flex; gap: 1.5rem; margin-top: 1.75rem; flex-wrap: wrap; }
+  .meta-chip { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #6b7280; }
+  .meta-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── TOPIC PILL NAV ── */
+  .topic-nav {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem;
+  }
+  .topic-pill {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 16px; border-radius: 30px; border: 1.5px solid;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: all 0.15s; background: var(--surface);
+    font-family: var(--font);
+  }
+  .topic-pill .pill-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .tp-list   { border-color: var(--blue-mid);   color: var(--blue); }
+  .tp-list.active, .tp-list:hover   { background: var(--blue-bg); }
+  .tp-tuple  { border-color: var(--purple-mid); color: var(--purple); }
+  .tp-tuple.active, .tp-tuple:hover { background: var(--purple-bg); }
+  .tp-lib    { border-color: var(--green-mid);  color: var(--green); }
+  .tp-lib.active, .tp-lib:hover     { background: var(--green-bg); }
+  .tp-stack  { border-color: var(--amber-mid);  color: var(--amber); }
+  .tp-stack.active, .tp-stack:hover { background: var(--amber-bg); }
+  .tp-queue  { border-color: var(--teal-mid);   color: var(--teal); }
+  .tp-queue.active, .tp-queue:hover { background: var(--teal-bg); }
+  .tp-lab    { border-color: var(--rose-mid);   color: var(--rose); }
+  .tp-lab.active, .tp-lab:hover     { background: var(--rose-bg); }
+  .tp-rubric { border-color: var(--border2);    color: var(--text2); }
+  .tp-rubric.active, .tp-rubric:hover { background: var(--surface2); }
+
+  .section { display: none; }
+  .section.active { display: block; animation: fadeUp 0.2s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── SECTION HEADER STRIP ── */
+  .sec-strip {
+    border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .strip-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .sec-strip h2 { font-size: 18px; font-weight: 600; }
+  .sec-strip p  { font-size: 13px; margin-top: 2px; line-height: 1.55; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.4rem 1.6rem; margin-bottom: 1.25rem;
+  }
+  .card-title {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin-bottom: 0.75rem; display: flex; align-items: center; gap: 9px;
+  }
+  .num-badge {
+    width: 24px; height: 24px; border-radius: 50%;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .card p, .card li { font-size: 13.5px; color: var(--text2); line-height: 1.75; }
+  .card ul, .card ol { padding-left: 1.3rem; }
+  .card ul li, .card ol li { margin-bottom: 5px; }
+
+  strong { color: var(--text); font-weight: 600; }
+  code {
+    font-family: var(--mono); font-size: 12px;
+    background: var(--surface2); border: 1px solid var(--border2);
+    padding: 1px 6px; border-radius: 4px; color: #7c3aed;
+  }
+
+  /* ── ANALOGY / NOTE BOXES ── */
+  .analogy-box {
+    border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0;
+  }
+  .box-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.09em; margin-bottom: 5px;
+  }
+  .analogy-box p { font-size: 13.5px; line-height: 1.75; }
+  .box-yellow { background: #fefce8; border: 1px solid #fde68a; }
+  .box-yellow .box-label { color: #b45309; }
+  .box-yellow p { color: #78350f; }
+  .box-blue { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .box-blue .box-label { color: #1d4ed8; }
+  .box-blue p { color: #1e3a8a; }
+  .box-green { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .box-green .box-label { color: #15803d; }
+  .box-green p { color: #14532d; }
+  .box-purple { background: #faf5ff; border: 1px solid #ddd6fe; }
+  .box-purple .box-label { color: #7c3aed; }
+  .box-purple p { color: #4c1d95; }
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap {
+    background: #0f172a; border-radius: 10px;
+    padding: 1.3rem 1.5rem; margin: 1rem 0; overflow-x: auto; position: relative;
+  }
+  .code-wrap pre { font-family: var(--mono); font-size: 12.5px; line-height: 1.85; color: #e2e8f0; white-space: pre; }
+  .code-label {
+    position: absolute; top: 9px; right: 14px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #334155; font-family: var(--mono);
+  }
+  .kw { color: #a78bfa; }
+  .fn { color: #38bdf8; }
+  .st { color: #34d399; }
+  .cm { color: #475569; }
+  .nm { color: #fbbf24; }
+  .op { color: #94a3b8; }
+  .bi { color: #fb923c; }
+
+  /* ── VOCAB GRID ── */
+  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(210px,1fr)); gap: 10px; margin-top: 0.8rem; }
+  .vocab-item { background: var(--surface2); border-radius: 8px; padding: 10px 13px; }
+  .vocab-term { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .vocab-def  { font-size: 12px; color: var(--text2); line-height: 1.55; }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 0.8rem; }
+  .compare-table th {
+    background: var(--surface2); color: var(--text2); font-weight: 600;
+    padding: 9px 14px; text-align: left; border-bottom: 1.5px solid var(--border2); font-size: 12px;
+  }
+  .compare-table td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .yes { color: var(--green); font-weight: 600; }
+  .no  { color: var(--rose);  font-weight: 600; }
+
+  /* ── VISUAL STACK / QUEUE ── */
+  .viz-wrap { margin: 1.25rem 0; }
+  .viz-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 8px; }
+  .stack-viz { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .stack-item {
+    padding: 8px 20px; border-radius: 6px; font-family: var(--mono);
+    font-size: 12.5px; font-weight: 500; border: 1.5px solid;
+    display: flex; align-items: center; gap: 10px; min-width: 200px;
+  }
+  .stack-arrow { font-size: 11px; color: var(--text3); flex-shrink: 0; }
+  .queue-viz { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .queue-item {
+    padding: 8px 16px; border-radius: 6px; font-family: var(--mono);
+    font-size: 12.5px; font-weight: 500; border: 1.5px solid;
+    display: flex; align-items: center;
+  }
+  .queue-arrow { color: var(--text3); font-size: 16px; padding: 0 2px; }
+  .label-badge {
+    font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    padding: 2px 7px; border-radius: 10px; margin-left: 6px;
+  }
+
+  /* ── LIST VISUAL ── */
+  .list-viz { display: flex; align-items: stretch; margin: 1rem 0; flex-wrap: wrap; gap: 0; }
+  .list-cell {
+    border: 1.5px solid var(--blue-mid); background: var(--blue-bg);
+    color: var(--blue); font-family: var(--mono); font-size: 12px; font-weight: 600;
+    padding: 10px 16px; text-align: center; min-width: 56px;
+  }
+  .list-cell:first-child { border-radius: 8px 0 0 8px; }
+  .list-cell:last-child  { border-radius: 0 8px 8px 0; border-left: none; }
+  .list-cell + .list-cell { border-left: none; }
+  .list-idx { font-size: 9px; font-weight: 600; color: var(--text3); display: block; margin-top: 3px; letter-spacing: 0.05em; }
+
+  /* ── METHOD PILLS ── */
+  .method-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.75rem; }
+  .method-pill {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 7px 12px; font-size: 12px;
+  }
+  .method-name { font-family: var(--mono); font-weight: 600; color: #7c3aed; font-size: 12px; }
+  .method-desc { font-size: 11px; color: var(--text2); margin-top: 1px; }
+
+  /* ── LAB ── */
+  .lab-hero {
+    background: var(--dark); border-radius: var(--radius);
+    padding: 1.75rem 2rem; margin-bottom: 1.5rem;
+  }
+  .lab-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; }
+  .lab-badge {
+    background: rgba(239,68,68,0.18); color: #fca5a5;
+    font-size: 10px; font-weight: 700; padding: 3px 11px;
+    border-radius: 20px; text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .lab-hero h2 { font-size: 20px; font-weight: 600; color: #f8fafc; }
+  .lab-hero p  { font-size: 13px; color: #6b7280; line-height: 1.7; margin-top: 6px; }
+  .obj-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 13px; }
+  .obj-chip {
+    background: rgba(251,191,36,0.12); color: #fbbf24;
+    border: 1px solid rgba(251,191,36,0.22); border-radius: 20px;
+    padding: 4px 12px; font-size: 11px; font-weight: 500;
+  }
+
+  /* ── TASK CARDS ── */
+  .task-card { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1.1rem; overflow: hidden; background: var(--surface); }
+  .task-header { padding: 1rem 1.3rem; display: flex; align-items: center; gap: 11px; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .task-header:hover { background: var(--surface2); }
+  .task-num { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .t1 { background: var(--blue-bg);   color: var(--blue); }
+  .t2 { background: var(--purple-bg); color: var(--purple); }
+  .t3 { background: var(--green-bg);  color: var(--green); }
+  .t4 { background: var(--amber-bg);  color: var(--amber); }
+  .t5 { background: var(--teal-bg);   color: var(--teal); }
+  .t6 { background: var(--rose-bg);   color: var(--rose); }
+  .task-title { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+  .task-pts { font-size: 11px; color: var(--text2); background: var(--surface2); padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+  .task-chev { color: var(--text3); font-size: 11px; transition: transform 0.2s; flex-shrink: 0; }
+  .task-chev.open { transform: rotate(90deg); }
+  .task-body { padding: 0 1.3rem 1.3rem; border-top: 1px solid var(--border); display: none; }
+  .task-body.open { display: block; }
+  .task-body > p { font-size: 13.5px; color: var(--text2); line-height: 1.75; margin-top: 0.9rem; }
+  .task-step { display: flex; gap: 10px; align-items: flex-start; margin: 9px 0; }
+  .step-dot { width: 6px; height: 6px; border-radius: 50%; background: #f59e0b; margin-top: 7px; flex-shrink: 0; }
+  .step-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
+  .hint-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; margin-top: 12px; }
+  .hint-label { font-size: 10px; font-weight: 700; color: #15803d; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .hint-box p { font-size: 12.5px; color: #166534; }
+  .challenge-box { background: #fdf4ff; border: 1px dashed #d8b4fe; border-radius: 8px; padding: 10px 14px; margin-top: 12px; }
+  .challenge-label { font-size: 10px; font-weight: 700; color: #7e22ce; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .challenge-box p { font-size: 12.5px; color: #6b21a8; }
+
+  /* ── RUBRIC ── */
+  .rubric-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 0.8rem; }
+  .rubric-table th { background: var(--surface2); color: var(--text2); font-weight: 600; padding: 9px 14px; text-align: left; border-bottom: 1.5px solid var(--border2); font-size: 12px; }
+  .rubric-table td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+  .rubric-table tr:last-child td { border-bottom: none; }
+  .pts-pill { display: inline-block; background: var(--blue-bg); color: var(--blue); padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .pts-pill.bonus { background: var(--purple-bg); color: var(--purple); }
+
+  @media print {
+    body { background: white; }
+    .topic-nav { display: none; }
+    .section { display: block !important; page-break-before: always; }
+    .section:first-of-type { page-break-before: avoid; }
+    .task-body { display: block !important; }
+  }
+  @media (max-width: 600px) {
+    .page { padding: 1.5rem 1rem 4rem; }
+    .hero { padding: 2rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-deco d1"></div>
+    <div class="hero-deco d2"></div>
+    <div class="hero-deco d3"></div>
+    <div class="hero-badge">Python · Data Structures</div>
+    <h1>Organizing Your Data:<br>Lists, Tuples, Libraries, Stacks &amp; Queues</h1>
+    <p>Learn how Python stores and organizes collections of data — and when to use each structure to write cleaner, smarter programs.</p>
+    <div class="hero-meta">
+      <div class="meta-chip"><div class="meta-dot" style="background:#fbbf24"></div>Beginner–Intermediate</div>
+      <div class="meta-chip"><div class="meta-dot" style="background:#34d399"></div>~75–90 min lesson</div>
+      <div class="meta-chip"><div class="meta-dot" style="background:#60a5fa"></div>Python 3.x · Standard Library</div>
+    </div>
+  </div>
+
+  <!-- TOPIC NAV -->
+  <div class="topic-nav">
+    <button class="topic-pill tp-list active"  onclick="showTab('lists',this)">  <span class="pill-dot" style="background:var(--blue)"></span>   Lists</button>
+    <button class="topic-pill tp-tuple"         onclick="showTab('tuples',this)"> <span class="pill-dot" style="background:var(--purple)"></span> Tuples</button>
+    <button class="topic-pill tp-lib"           onclick="showTab('libs',this)">   <span class="pill-dot" style="background:var(--green)"></span>  Libraries</button>
+    <button class="topic-pill tp-stack"         onclick="showTab('stacks',this)"> <span class="pill-dot" style="background:var(--amber)"></span>  Stacks</button>
+    <button class="topic-pill tp-queue"         onclick="showTab('queues',this)"> <span class="pill-dot" style="background:var(--teal)"></span>   Queues</button>
+    <button class="topic-pill tp-lab"           onclick="showTab('lab',this)">    <span class="pill-dot" style="background:var(--rose)"></span>   Lab Activity</button>
+    <button class="topic-pill tp-rubric"        onclick="showTab('rubric',this)"> <span class="pill-dot" style="background:var(--text3)"></span>  Rubric</button>
+  </div>
+
+  <!-- ════════════════════════════════
+       LISTS
+  ════════════════════════════════ -->
+  <div id="tab-lists" class="section active">
+    <div class="sec-strip" style="background:var(--blue-bg);">
+      <div class="strip-icon" style="background:var(--blue);color:#fff;">[ ]</div>
+      <div>
+        <h2 style="color:var(--blue)">Lists</h2>
+        <p style="color:#1e40af">An ordered, changeable collection that can hold any mix of values.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--blue-bg);color:var(--blue);">1</div>What is a List?</div>
+      <p>A <strong>list</strong> is like a numbered shelf where each slot holds one item. You can add things, remove things, and change what's in any slot. Lists are one of Python's most-used tools.</p>
+      <div class="viz-wrap" style="margin-top:1rem">
+        <div class="viz-label">List: fruits = ["apple", "banana", "cherry", "date"]</div>
+        <div class="list-viz">
+          <div class="list-cell">"apple"<span class="list-idx">index 0</span></div>
+          <div class="list-cell">"banana"<span class="list-idx">index 1</span></div>
+          <div class="list-cell">"cherry"<span class="list-idx">index 2</span></div>
+          <div class="list-cell">"date"<span class="list-idx">index 3</span></div>
+        </div>
+      </div>
+      <div class="analogy-box box-yellow" style="margin-top:1rem">
+        <div class="box-label">Analogy</div>
+        <p>Think of a list like a <strong>grocery list on paper</strong> — you can cross things off, add new items, and swap things around as much as you want.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--blue-bg);color:var(--blue);">2</div>Creating and Accessing Lists</div>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre><span class="cm"># Create a list</span>
+fruits <span class="op">=</span> [<span class="st">"apple"</span>, <span class="st">"banana"</span>, <span class="st">"cherry"</span>]
+
+<span class="cm"># Access by index (starts at 0)</span>
+<span class="fn">print</span>(fruits[<span class="nm">0</span>])       <span class="cm"># apple</span>
+<span class="fn">print</span>(fruits[<span class="nm">2</span>])       <span class="cm"># cherry</span>
+<span class="fn">print</span>(fruits[<span class="op">-</span><span class="nm">1</span>])      <span class="cm"># cherry  (last item)</span>
+
+<span class="cm"># Slicing — get a portion</span>
+<span class="fn">print</span>(fruits[<span class="nm">0</span>:<span class="nm">2</span>])     <span class="cm"># ['apple', 'banana']</span>
+
+<span class="cm"># Lists can hold mixed types</span>
+mixed <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="nm">17</span>, <span class="kw">True</span>, <span class="nm">3.14</span>]</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--blue-bg);color:var(--blue);">3</div>Modifying Lists</div>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre>fruits <span class="op">=</span> [<span class="st">"apple"</span>, <span class="st">"banana"</span>, <span class="st">"cherry"</span>]
+
+<span class="cm"># Change an item</span>
+fruits[<span class="nm">1</span>] <span class="op">=</span> <span class="st">"blueberry"</span>
+
+<span class="cm"># Add to the end</span>
+fruits.<span class="fn">append</span>(<span class="st">"date"</span>)
+
+<span class="cm"># Insert at a specific position</span>
+fruits.<span class="fn">insert</span>(<span class="nm">1</span>, <span class="st">"avocado"</span>)
+
+<span class="cm"># Remove an item by value</span>
+fruits.<span class="fn">remove</span>(<span class="st">"cherry"</span>)
+
+<span class="cm"># Remove by index</span>
+fruits.<span class="fn">pop</span>(<span class="nm">0</span>)
+
+<span class="cm"># Sort the list</span>
+fruits.<span class="fn">sort</span>()
+
+<span class="fn">print</span>(fruits)</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--blue-bg);color:var(--blue);">4</div>Looping Through a List</div>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre>scores <span class="op">=</span> [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">75</span>, <span class="nm">100</span>, <span class="nm">67</span>]
+
+<span class="cm"># Loop through items</span>
+<span class="kw">for</span> score <span class="kw">in</span> scores:
+    <span class="fn">print</span>(<span class="st">f"Score: </span>{score}<span class="st">"</span>)
+
+<span class="cm"># Loop with index using enumerate()</span>
+<span class="kw">for</span> i, score <span class="kw">in</span> <span class="bi">enumerate</span>(scores):
+    <span class="fn">print</span>(<span class="st">f"Student </span>{i<span class="op">+</span><span class="nm">1</span>}<span class="st">: </span>{score}<span class="st">"</span>)
+
+<span class="cm"># Useful list functions</span>
+<span class="fn">print</span>(<span class="bi">len</span>(scores))        <span class="cm"># number of items: 5</span>
+<span class="fn">print</span>(<span class="bi">sum</span>(scores))        <span class="cm"># total: 422</span>
+<span class="fn">print</span>(<span class="bi">max</span>(scores))        <span class="cm"># highest: 100</span>
+<span class="fn">print</span>(<span class="bi">min</span>(scores))        <span class="cm"># lowest: 67</span></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--blue-bg);color:var(--blue);">5</div>Common List Methods</div>
+      <div class="method-grid">
+        <div class="method-pill"><div class="method-name">.append(x)</div><div class="method-desc">Add x to the end</div></div>
+        <div class="method-pill"><div class="method-name">.insert(i, x)</div><div class="method-desc">Insert x at position i</div></div>
+        <div class="method-pill"><div class="method-name">.remove(x)</div><div class="method-desc">Remove first occurrence of x</div></div>
+        <div class="method-pill"><div class="method-name">.pop(i)</div><div class="method-desc">Remove and return item at i</div></div>
+        <div class="method-pill"><div class="method-name">.sort()</div><div class="method-desc">Sort in place</div></div>
+        <div class="method-pill"><div class="method-name">.reverse()</div><div class="method-desc">Reverse in place</div></div>
+        <div class="method-pill"><div class="method-name">.index(x)</div><div class="method-desc">Find position of x</div></div>
+        <div class="method-pill"><div class="method-name">.count(x)</div><div class="method-desc">How many times x appears</div></div>
+        <div class="method-pill"><div class="method-name">.clear()</div><div class="method-desc">Remove all items</div></div>
+        <div class="method-pill"><div class="method-name">.copy()</div><div class="method-desc">Return a shallow copy</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       TUPLES
+  ════════════════════════════════ -->
+  <div id="tab-tuples" class="section">
+    <div class="sec-strip" style="background:var(--purple-bg);">
+      <div class="strip-icon" style="background:var(--purple);color:#fff;">( )</div>
+      <div>
+        <h2 style="color:var(--purple)">Tuples</h2>
+        <p style="color:#4c1d95">An ordered, <strong>unchangeable</strong> collection — like a locked list.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--purple-bg);color:var(--purple);">1</div>What is a Tuple?</div>
+      <p>A <strong>tuple</strong> is like a list, but once you create it you can't change it. You can't add, remove, or swap items. This makes tuples perfect for data that should stay the same — like GPS coordinates or RGB colors.</p>
+      <div class="analogy-box box-purple" style="margin-top:1rem">
+        <div class="box-label">Analogy</div>
+        <p>A tuple is like a <strong>printed receipt</strong> — it records exactly what happened and you can read it any time, but you can't go back and change the items on it.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--purple-bg);color:var(--purple);">2</div>Creating and Using Tuples</div>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre><span class="cm"># Create a tuple with parentheses</span>
+coordinates <span class="op">=</span> (<span class="nm">34.7465</span>, <span class="op">-</span><span class="nm">92.2896</span>)
+rgb_red      <span class="op">=</span> (<span class="nm">255</span>, <span class="nm">0</span>, <span class="nm">0</span>)
+student      <span class="op">=</span> (<span class="st">"Alice"</span>, <span class="nm">17</span>, <span class="st">"11th grade"</span>)
+
+<span class="cm"># Access by index — same as lists</span>
+<span class="fn">print</span>(coordinates[<span class="nm">0</span>])    <span class="cm"># 34.7465  (latitude)</span>
+<span class="fn">print</span>(student[<span class="nm">0</span>])         <span class="cm"># Alice</span>
+
+<span class="cm"># Tuple unpacking — assign each value to a variable</span>
+lat, lon <span class="op">=</span> coordinates
+<span class="fn">print</span>(<span class="st">f"Lat: </span>{lat}<span class="st">, Lon: </span>{lon}<span class="st">"</span>)
+
+name, age, grade <span class="op">=</span> student
+<span class="fn">print</span>(<span class="st">f"</span>{name}<span class="st"> is in </span>{grade}<span class="st">"</span>)
+
+<span class="cm"># You CAN loop through a tuple</span>
+<span class="kw">for</span> value <span class="kw">in</span> rgb_red:
+    <span class="fn">print</span>(value)</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--purple-bg);color:var(--purple);">3</div>Tuples are Immutable</div>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre>point <span class="op">=</span> (<span class="nm">10</span>, <span class="nm">20</span>)
+
+<span class="cm"># This will cause an ERROR:</span>
+<span class="cm"># point[0] = 99   ← TypeError: 'tuple' object does not support item assignment</span>
+
+<span class="cm"># But you CAN reassign the whole variable</span>
+point <span class="op">=</span> (<span class="nm">99</span>, <span class="nm">20</span>)   <span class="cm"># this works — creating a brand new tuple</span>
+
+<span class="cm"># Convert between list and tuple</span>
+my_list  <span class="op">=</span> [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]
+my_tuple <span class="op">=</span> <span class="bi">tuple</span>(my_list)   <span class="cm"># list → tuple</span>
+back_to_list <span class="op">=</span> <span class="bi">list</span>(my_tuple) <span class="cm"># tuple → list</span></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--purple-bg);color:var(--purple);">4</div>List vs Tuple — When to Use Which?</div>
+      <table class="compare-table">
+        <thead><tr><th>Feature</th><th>List [ ]</th><th>Tuple ( )</th></tr></thead>
+        <tbody>
+          <tr><td>Can change values</td><td class="yes">Yes</td><td class="no">No</td></tr>
+          <tr><td>Can add/remove items</td><td class="yes">Yes</td><td class="no">No</td></tr>
+          <tr><td>Can access by index</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+          <tr><td>Can loop through</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+          <tr><td>Faster &amp; uses less memory</td><td class="no">Slower</td><td class="yes">Faster</td></tr>
+          <tr><td>Best for...</td><td>Data that changes (scores, names)</td><td>Fixed data (coordinates, colors)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       LIBRARIES
+  ════════════════════════════════ -->
+  <div id="tab-libs" class="section">
+    <div class="sec-strip" style="background:var(--green-bg);">
+      <div class="strip-icon" style="background:var(--green);color:#fff; font-size:16px;">{ }</div>
+      <div>
+        <h2 style="color:var(--green)">Libraries</h2>
+        <p style="color:#14532d">Pre-built collections of code you can import and use in your programs.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--green-bg);color:var(--green);">1</div>What is a Library?</div>
+      <p>A <strong>library</strong> (also called a <strong>module</strong>) is a file full of pre-written Python functions and tools. Instead of writing code from scratch, you <strong>import</strong> a library and use what's already built.</p>
+      <div class="analogy-box box-green" style="margin-top:1rem">
+        <div class="box-label">Analogy</div>
+        <p>A library is like a <strong>toolbox</strong>. You don't build a hammer from raw materials every time you need one — you just open the toolbox and grab it. Python's libraries are pre-made tools for math, dates, files, web requests, and much more.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--green-bg);color:var(--green);">2</div>Importing Libraries</div>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre><span class="cm"># Import the whole library</span>
+<span class="kw">import</span> math
+<span class="fn">print</span>(math.<span class="fn">sqrt</span>(<span class="nm">144</span>))     <span class="cm"># 12.0</span>
+<span class="fn">print</span>(math.pi)              <span class="cm"># 3.141592...</span>
+
+<span class="cm"># Import just what you need</span>
+<span class="kw">from</span> math <span class="kw">import</span> sqrt, pi
+<span class="fn">print</span>(<span class="fn">sqrt</span>(<span class="nm">64</span>))             <span class="cm"># 8.0  (no "math." prefix needed)</span>
+
+<span class="cm"># Import with a short alias (nickname)</span>
+<span class="kw">import</span> random <span class="kw">as</span> r
+<span class="fn">print</span>(r.<span class="fn">randint</span>(<span class="nm">1</span>, <span class="nm">10</span>))    <span class="cm"># random number 1–10</span></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--green-bg);color:var(--green);">3</div>The math Library</div>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre><span class="kw">import</span> math
+
+<span class="fn">print</span>(math.<span class="fn">sqrt</span>(<span class="nm">25</span>))       <span class="cm"># 5.0  — square root</span>
+<span class="fn">print</span>(math.<span class="fn">floor</span>(<span class="nm">4.9</span>))     <span class="cm"># 4    — round down</span>
+<span class="fn">print</span>(math.<span class="fn">ceil</span>(<span class="nm">4.1</span>))      <span class="cm"># 5    — round up</span>
+<span class="fn">print</span>(math.<span class="fn">pow</span>(<span class="nm">2</span>, <span class="nm">8</span>))       <span class="cm"># 256.0 — 2 to the 8th power</span>
+<span class="fn">print</span>(math.<span class="fn">log</span>(<span class="nm">100</span>, <span class="nm">10</span>))   <span class="cm"># 2.0  — log base 10</span>
+<span class="fn">print</span>(math.pi)              <span class="cm"># 3.14159...</span>
+<span class="fn">print</span>(math.<span class="fn">factorial</span>(<span class="nm">5</span>))   <span class="cm"># 120  — 5!</span></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--green-bg);color:var(--green);">4</div>The random Library</div>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre><span class="kw">import</span> random
+
+<span class="cm"># Random integer between 1 and 6 (like a die)</span>
+roll <span class="op">=</span> random.<span class="fn">randint</span>(<span class="nm">1</span>, <span class="nm">6</span>)
+<span class="fn">print</span>(<span class="st">f"You rolled: </span>{roll}<span class="st">"</span>)
+
+<span class="cm"># Random float between 0 and 1</span>
+chance <span class="op">=</span> random.<span class="fn">random</span>()
+
+<span class="cm"># Pick a random item from a list</span>
+colors <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"blue"</span>, <span class="st">"green"</span>]
+pick <span class="op">=</span> random.<span class="fn">choice</span>(colors)
+<span class="fn">print</span>(<span class="st">f"Chosen color: </span>{pick}<span class="st">"</span>)
+
+<span class="cm"># Shuffle a list in place</span>
+deck <span class="op">=</span> [<span class="st">"A"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"K"</span>, <span class="st">"Q"</span>]
+random.<span class="fn">shuffle</span>(deck)
+<span class="fn">print</span>(deck)</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--green-bg);color:var(--green);">5</div>The datetime Library</div>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre><span class="kw">from</span> datetime <span class="kw">import</span> datetime, date
+
+<span class="cm"># Get today's date</span>
+today <span class="op">=</span> date.<span class="fn">today</span>()
+<span class="fn">print</span>(<span class="st">f"Today is: </span>{today}<span class="st">"</span>)
+
+<span class="cm"># Get current date and time</span>
+now <span class="op">=</span> datetime.<span class="fn">now</span>()
+<span class="fn">print</span>(<span class="st">f"Right now: </span>{now}<span class="st">"</span>)
+
+<span class="cm"># Format dates for display</span>
+formatted <span class="op">=</span> now.<span class="fn">strftime</span>(<span class="st">"%B %d, %Y"</span>)
+<span class="fn">print</span>(formatted)              <span class="cm"># April 06, 2026</span>
+
+<span class="cm"># Calculate days until graduation</span>
+graduation <span class="op">=</span> date(<span class="nm">2026</span>, <span class="nm">5</span>, <span class="nm">22</span>)
+days_left   <span class="op">=</span> (graduation <span class="op">-</span> today).days
+<span class="fn">print</span>(<span class="st">f"Days until graduation: </span>{days_left}<span class="st">"</span>)</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--green-bg);color:var(--green);">6</div>Other Useful Built-in Libraries</div>
+      <div class="vocab-grid">
+        <div class="vocab-item" style="border-left:3px solid var(--green)"><div class="vocab-term" style="color:var(--green)">os</div><div class="vocab-def">Work with files, folders, and the operating system</div></div>
+        <div class="vocab-item" style="border-left:3px solid var(--green)"><div class="vocab-term" style="color:var(--green)">json</div><div class="vocab-def">Read and write JSON data (great with APIs!)</div></div>
+        <div class="vocab-item" style="border-left:3px solid var(--green)"><div class="vocab-term" style="color:var(--green)">sys</div><div class="vocab-def">Access Python interpreter settings and exit the program</div></div>
+        <div class="vocab-item" style="border-left:3px solid var(--green)"><div class="vocab-term" style="color:var(--green)">time</div><div class="vocab-def">Pause execution, measure elapsed time</div></div>
+        <div class="vocab-item" style="border-left:3px solid var(--green)"><div class="vocab-term" style="color:var(--green)">collections</div><div class="vocab-def">Specialized data types like Counter and deque</div></div>
+        <div class="vocab-item" style="border-left:3px solid var(--green)"><div class="vocab-term" style="color:var(--green)">statistics</div><div class="vocab-def">Mean, median, mode, standard deviation</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       STACKS
+  ════════════════════════════════ -->
+  <div id="tab-stacks" class="section">
+    <div class="sec-strip" style="background:var(--amber-bg);">
+      <div class="strip-icon" style="background:var(--amber);color:#fff; font-size:14px;">LIFO</div>
+      <div>
+        <h2 style="color:var(--amber)">Stacks</h2>
+        <p style="color:#78350f"><strong>Last In, First Out</strong> — the last item added is the first one removed.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--amber-bg);color:var(--amber);">1</div>What is a Stack?</div>
+      <p>A <strong>stack</strong> is a data structure where items are added and removed from the <strong>same end</strong> — the top. The last item you pushed on is the first one you pop off. This is called <strong>LIFO</strong>: Last In, First Out.</p>
+      <div class="analogy-box box-yellow" style="margin-top:1rem">
+        <div class="box-label">Analogy</div>
+        <p>Think of a <strong>stack of lunch trays</strong> in a cafeteria. You always take the tray from the top (the last one placed there), and when trays are cleaned, they go back on top.</p>
+      </div>
+      <div class="viz-wrap" style="margin-top:1.25rem">
+        <div class="viz-label">Stack — items added/removed from the TOP</div>
+        <div class="stack-viz">
+          <div class="stack-item" style="background:var(--amber-bg);border-color:var(--amber-mid);color:var(--amber)">
+            "email_draft" <span class="label-badge" style="background:var(--amber);color:#fff;">← TOP (most recent)</span>
+            <span class="stack-arrow">← pop() / push()</span>
+          </div>
+          <div class="stack-item" style="background:#fef9c3;border-color:#fde047;color:#92400e">"photo_edit"</div>
+          <div class="stack-item" style="background:#fef9c3;border-color:#fde047;color:#92400e">"spreadsheet"</div>
+          <div class="stack-item" style="background:#fef9c3;border-color:#fde047;color:#92400e">
+            "browser" <span class="label-badge" style="background:#92400e;color:#fef9c3;">BOTTOM (oldest)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--amber-bg);color:var(--amber);">2</div>Implementing a Stack with a List</div>
+      <p>Python's built-in list works perfectly as a stack. Use <code>.append()</code> to push and <code>.pop()</code> to remove from the top.</p>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre><span class="cm"># A stack is just a list used in a specific way</span>
+undo_stack <span class="op">=</span> []
+
+<span class="cm"># PUSH — add to the top</span>
+undo_stack.<span class="fn">append</span>(<span class="st">"typed 'Hello'"</span>)
+undo_stack.<span class="fn">append</span>(<span class="st">"typed ' World'"</span>)
+undo_stack.<span class="fn">append</span>(<span class="st">"deleted 3 chars"</span>)
+
+<span class="fn">print</span>(undo_stack)
+<span class="cm"># ['typed Hello', 'typed  World', 'deleted 3 chars']</span>
+
+<span class="cm"># POP — remove from the top (undo last action)</span>
+last_action <span class="op">=</span> undo_stack.<span class="fn">pop</span>()
+<span class="fn">print</span>(<span class="st">f"Undoing: </span>{last_action}<span class="st">"</span>)
+<span class="cm"># Undoing: deleted 3 chars</span>
+
+<span class="cm"># PEEK — see top without removing</span>
+top <span class="op">=</span> undo_stack[<span class="op">-</span><span class="nm">1</span>]
+<span class="fn">print</span>(<span class="st">f"Next to undo: </span>{top}<span class="st">"</span>)
+
+<span class="cm"># Check if empty</span>
+<span class="kw">if not</span> undo_stack:
+    <span class="fn">print</span>(<span class="st">"Nothing to undo!"</span>)</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--amber-bg);color:var(--amber);">3</div>Real-World Uses of Stacks</div>
+      <ul>
+        <li><strong>Undo/Redo</strong> in text editors and design apps</li>
+        <li><strong>Browser back button</strong> — each page visited is pushed; hitting back pops it</li>
+        <li><strong>Function call stack</strong> — Python tracks which function called which using a stack</li>
+        <li><strong>Parenthesis matching</strong> — compilers use stacks to check if brackets are balanced</li>
+      </ul>
+      <div class="code-wrap" style="margin-top:1rem">
+        <div class="code-label">python — real example: check balanced brackets</div>
+        <pre><span class="kw">def</span> <span class="fn">is_balanced</span>(expression):
+    stack <span class="op">=</span> []
+    pairs <span class="op">=</span> {<span class="st">')'</span>: <span class="st">'('</span>, <span class="st">']'</span>: <span class="st">'['</span>, <span class="st">'}'</span>: <span class="st">'{'</span>}
+
+    <span class="kw">for</span> char <span class="kw">in</span> expression:
+        <span class="kw">if</span> char <span class="kw">in</span> <span class="st">'([{'</span>:
+            stack.<span class="fn">append</span>(char)
+        <span class="kw">elif</span> char <span class="kw">in</span> <span class="st">')]}'</span>:
+            <span class="kw">if not</span> stack <span class="kw">or</span> stack.<span class="fn">pop</span>() <span class="op">!=</span> pairs[char]:
+                <span class="kw">return</span> <span class="kw">False</span>
+
+    <span class="kw">return</span> <span class="bi">len</span>(stack) <span class="op">==</span> <span class="nm">0</span>
+
+<span class="fn">print</span>(<span class="fn">is_balanced</span>(<span class="st">"(a + b) * [c - d]"</span>))   <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">is_balanced</span>(<span class="st">"(a + [b)"</span>))             <span class="cm"># False</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       QUEUES
+  ════════════════════════════════ -->
+  <div id="tab-queues" class="section">
+    <div class="sec-strip" style="background:var(--teal-bg);">
+      <div class="strip-icon" style="background:var(--teal);color:#fff; font-size:14px;">FIFO</div>
+      <div>
+        <h2 style="color:var(--teal)">Queues</h2>
+        <p style="color:#0f766e"><strong>First In, First Out</strong> — the first item added is the first one removed.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--teal-bg);color:var(--teal);">1</div>What is a Queue?</div>
+      <p>A <strong>queue</strong> is a data structure where items are added at the back and removed from the front — just like a real-world line. This is called <strong>FIFO</strong>: First In, First Out.</p>
+      <div class="analogy-box" style="background:var(--teal-bg);border:1px solid var(--teal-mid);margin-top:1rem">
+        <div class="box-label" style="color:var(--teal)">Analogy</div>
+        <p style="color:var(--teal)">A queue is exactly like <strong>a line at the school lunch counter</strong>. The first student in line gets served first. New students join at the back and wait their turn.</p>
+      </div>
+      <div class="viz-wrap" style="margin-top:1.25rem">
+        <div class="viz-label">Queue — items added at BACK, removed from FRONT</div>
+        <div class="queue-viz">
+          <div style="font-size:11px;color:var(--teal);font-weight:700;margin-right:4px">FRONT →</div>
+          <div class="queue-item" style="background:var(--teal-bg);border-color:var(--teal-mid);color:var(--teal)">
+            "Alice" <span class="label-badge" style="background:var(--teal);color:#fff;">← dequeue</span>
+          </div>
+          <div class="queue-arrow">→</div>
+          <div class="queue-item" style="background:#ccfbf1;border-color:#5eead4;color:#0f766e">"Bob"</div>
+          <div class="queue-arrow">→</div>
+          <div class="queue-item" style="background:#ccfbf1;border-color:#5eead4;color:#0f766e">"Carlos"</div>
+          <div class="queue-arrow">→</div>
+          <div class="queue-item" style="background:#ccfbf1;border-color:#5eead4;color:#0f766e">
+            "Diana" <span class="label-badge" style="background:#0f766e;color:#ccfbf1;">enqueue →</span>
+          </div>
+          <div style="font-size:11px;color:var(--teal);font-weight:700;margin-left:4px">← BACK</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--teal-bg);color:var(--teal);">2</div>Using collections.deque for Queues</div>
+      <p>You could use a list, but Python's <code>collections.deque</code> is faster and purpose-built for queues.</p>
+      <div class="code-wrap">
+        <div class="code-label">python</div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="cm"># Create an empty queue</span>
+lunch_line <span class="op">=</span> <span class="fn">deque</span>()
+
+<span class="cm"># ENQUEUE — add to the back</span>
+lunch_line.<span class="fn">append</span>(<span class="st">"Alice"</span>)
+lunch_line.<span class="fn">append</span>(<span class="st">"Bob"</span>)
+lunch_line.<span class="fn">append</span>(<span class="st">"Carlos"</span>)
+
+<span class="fn">print</span>(lunch_line)
+<span class="cm"># deque(['Alice', 'Bob', 'Carlos'])</span>
+
+<span class="cm"># DEQUEUE — remove from the front</span>
+served <span class="op">=</span> lunch_line.<span class="fn">popleft</span>()
+<span class="fn">print</span>(<span class="st">f"Now serving: </span>{served}<span class="st">"</span>)
+<span class="cm"># Now serving: Alice</span>
+
+<span class="cm"># PEEK at the front without removing</span>
+next_up <span class="op">=</span> lunch_line[<span class="nm">0</span>]
+<span class="fn">print</span>(<span class="st">f"Next in line: </span>{next_up}<span class="st">"</span>)
+<span class="cm"># Next in line: Bob</span>
+
+<span class="cm"># Check how many are waiting</span>
+<span class="fn">print</span>(<span class="st">f"People in line: </span>{<span class="bi">len</span>(lunch_line)}<span class="st">"</span>)
+<span class="cm"># People in line: 2</span></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--teal-bg);color:var(--teal);">3</div>Simulating a Queue — Full Example</div>
+      <div class="code-wrap">
+        <div class="code-label">python — printer queue simulation</div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+printer_queue <span class="op">=</span> <span class="fn">deque</span>()
+
+<span class="cm"># Students send jobs to the printer</span>
+printer_queue.<span class="fn">append</span>(<span class="st">"Math homework - Alice"</span>)
+printer_queue.<span class="fn">append</span>(<span class="st">"Essay draft - Bob"</span>)
+printer_queue.<span class="fn">append</span>(<span class="st">"Science lab - Carlos"</span>)
+
+<span class="fn">print</span>(<span class="st">f"Jobs in queue: </span>{<span class="bi">len</span>(printer_queue)}<span class="st">"</span>)
+
+<span class="cm"># Process each job in order</span>
+<span class="kw">while</span> printer_queue:
+    job <span class="op">=</span> printer_queue.<span class="fn">popleft</span>()
+    <span class="fn">print</span>(<span class="st">f"Printing: </span>{job}<span class="st">"</span>)
+
+<span class="fn">print</span>(<span class="st">"All jobs complete!"</span>)</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="num-badge" style="background:var(--teal-bg);color:var(--teal);">4</div>Stack vs Queue — Side by Side</div>
+      <table class="compare-table">
+        <thead><tr><th>Feature</th><th>Stack (LIFO)</th><th>Queue (FIFO)</th></tr></thead>
+        <tbody>
+          <tr><td>Add items at</td><td>The top</td><td>The back</td></tr>
+          <tr><td>Remove items from</td><td>The top</td><td>The front</td></tr>
+          <tr><td>Python method to add</td><td><code>.append()</code></td><td><code>.append()</code></td></tr>
+          <tr><td>Python method to remove</td><td><code>.pop()</code></td><td><code>.popleft()</code></td></tr>
+          <tr><td>Best data type</td><td>List</td><td>collections.deque</td></tr>
+          <tr><td>Real-world example</td><td>Undo history, browser back</td><td>Printer queue, customer service</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       LAB
+  ════════════════════════════════ -->
+  <div id="tab-lab" class="section">
+
+    <div class="lab-hero">
+      <div class="lab-title-row">
+        <div class="lab-badge">Lab Activity</div>
+      </div>
+      <h2>Data Structures Playground</h2>
+      <p>In this lab you'll apply lists, tuples, libraries, stacks, and queues to solve real mini-problems. Each task focuses on one structure — work through them in order.</p>
+      <div class="obj-chips">
+        <div class="obj-chip">Manipulate lists</div>
+        <div class="obj-chip">Use tuples correctly</div>
+        <div class="obj-chip">Import libraries</div>
+        <div class="obj-chip">Build a stack</div>
+        <div class="obj-chip">Simulate a queue</div>
+      </div>
+    </div>
+
+    <!-- Task 1 -->
+    <div class="task-card">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-num t1">1</div>
+        <div class="task-title">Lists — Class Gradebook</div>
+        <div class="task-pts">20 pts</div>
+        <div class="task-chev">▶</div>
+      </div>
+      <div class="task-body">
+        <p>Build a simple gradebook using a list. You'll add scores, calculate statistics, and display a formatted report.</p>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Create a list called <code>scores</code> with at least 8 integers between 50 and 100</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Use built-in functions to print the <strong>average</strong>, <strong>highest score</strong>, <strong>lowest score</strong>, and <strong>total number of students</strong></div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Sort the list and print it from lowest to highest</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Use a loop to print each score with a letter grade (A = 90+, B = 80+, C = 70+, D = 60+, F = below 60)</div></div>
+        <div class="hint-box">
+          <div class="hint-label">Hint</div>
+          <p>Average = <code>sum(scores) / len(scores)</code>. Use <code>round(avg, 1)</code> to round to one decimal place.</p>
+        </div>
+        <div class="challenge-box">
+          <div class="challenge-label">Challenge +5 pts</div>
+          <p>Count how many students earned each letter grade and display a summary. (Hint: use a dictionary or counter variables.)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task 2 -->
+    <div class="task-card">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-num t2">2</div>
+        <div class="task-title">Tuples — Student Records</div>
+        <div class="task-pts">15 pts</div>
+        <div class="task-chev">▶</div>
+      </div>
+      <div class="task-body">
+        <p>Use tuples to store fixed student data, then loop through a list of tuples to display a class roster.</p>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Create 5 tuples, each holding: <code>(name, grade_level, gpa)</code> for 5 students</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Store all 5 tuples in a list called <code>roster</code></div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Loop through the roster and print each student's info in a readable format</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Try to change a value inside one of the tuples — what happens? Write a comment explaining the error.</div></div>
+        <div class="hint-box">
+          <div class="hint-label">Hint</div>
+          <p>Use tuple unpacking in your loop: <code>for name, grade, gpa in roster:</code> — this assigns each value automatically!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task 3 -->
+    <div class="task-card">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-num t3">3</div>
+        <div class="task-title">Libraries — Random Quiz Generator</div>
+        <div class="task-pts">20 pts</div>
+        <div class="task-chev">▶</div>
+      </div>
+      <div class="task-body">
+        <p>Use the <code>random</code> and <code>datetime</code> libraries to build a quiz tool that picks questions randomly.</p>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Create a list of at least 8 trivia questions (strings)</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Use <code>random.shuffle()</code> to randomize the order of questions</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Use <code>random.sample(questions, 5)</code> to pick 5 questions for the quiz</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Use <code>datetime.now()</code> to print the current date and time at the top of the quiz</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Use <code>math.ceil()</code> to calculate and display a "passing score" of 70% rounded up to the nearest whole question</div></div>
+        <div class="hint-box">
+          <div class="hint-label">Hint</div>
+          <p><code>random.sample(list, k)</code> returns a new list of <code>k</code> randomly picked items without repeating. Import both libraries at the top!</p>
+        </div>
+        <div class="challenge-box">
+          <div class="challenge-label">Challenge +5 pts</div>
+          <p>Turn this into an actual quiz: prompt the user for each answer with <code>input()</code>, then print a score at the end.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task 4 -->
+    <div class="task-card">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-num t4">4</div>
+        <div class="task-title">Stacks — Browser History Simulator</div>
+        <div class="task-pts">25 pts</div>
+        <div class="task-chev">▶</div>
+      </div>
+      <div class="task-body">
+        <p>Build a simple browser history system using a stack. Simulate visiting pages and pressing the back button.</p>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Create an empty list called <code>history</code> to use as your stack</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Write a function <code>visit(url)</code> that pushes a URL onto the history stack and prints <code>"Visiting: [url]"</code></div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Write a function <code>go_back()</code> that pops the top URL and prints <code>"Going back to: [previous url]"</code> — handle the case where history is empty</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Visit at least 5 URLs, then call <code>go_back()</code> 3 times and print the remaining history</div></div>
+        <div class="hint-box">
+          <div class="hint-label">Hint</div>
+          <p>After popping the current page, the top of the stack is what you'd go back to: <code>history[-1]</code> (peek). Don't forget to check <code>if len(history) &lt;= 1</code> before going back!</p>
+        </div>
+        <div class="challenge-box">
+          <div class="challenge-label">Challenge +5 pts</div>
+          <p>Add a <code>forward_stack</code> so going back pushes the page to a forward stack, and a <code>go_forward()</code> function works just like a real browser's forward button.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task 5 -->
+    <div class="task-card">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-num t5">5</div>
+        <div class="task-title">Queues — Help Desk Ticket System</div>
+        <div class="task-pts">20 pts</div>
+        <div class="task-chev">▶</div>
+      </div>
+      <div class="task-body">
+        <p>Simulate a help desk where students submit tech support tickets and a technician processes them in order.</p>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Import <code>deque</code> from <code>collections</code> and create an empty queue called <code>ticket_queue</code></div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Write a function <code>submit_ticket(name, issue)</code> that adds a ticket tuple <code>(name, issue)</code> to the queue and prints a confirmation</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Write a function <code>process_next()</code> that dequeues the front ticket, prints "Now helping: [name] — [issue]", and handles an empty queue gracefully</div></div>
+        <div class="task-step"><div class="step-dot"></div><div class="step-text">Submit at least 4 tickets, then process them all in a loop, printing how many tickets remain after each one</div></div>
+        <div class="hint-box">
+          <div class="hint-label">Hint</div>
+          <p>Use <code>.append()</code> to enqueue and <code>.popleft()</code> to dequeue. Tickets are tuples — unpack them with <code>name, issue = ticket_queue.popleft()</code>.</p>
+        </div>
+        <div class="challenge-box">
+          <div class="challenge-label">Challenge +5 pts</div>
+          <p>Add a <strong>priority</strong> to each ticket: <code>(name, issue, priority)</code> where priority is 1 (urgent) or 2 (normal). Sort the queue so urgent tickets always go first.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════
+       RUBRIC
+  ════════════════════════════════ -->
+  <div id="tab-rubric" class="section">
+
+    <div class="card">
+      <div class="card-title">Grading Rubric — 100 Points Total</div>
+      <table class="rubric-table">
+        <thead><tr><th>Task</th><th>Points</th><th>What earns full credit</th></tr></thead>
+        <tbody>
+          <tr><td>Task 1 — Lists Gradebook</td><td><span class="pts-pill">20</span></td><td>List created, all stats correct, sorted output, letter grades printed</td></tr>
+          <tr><td>Task 2 — Tuples Roster</td><td><span class="pts-pill">15</span></td><td>Tuples used correctly, list of tuples, unpacking in loop, error comment included</td></tr>
+          <tr><td>Task 3 — Libraries Quiz</td><td><span class="pts-pill">20</span></td><td>Both libraries imported, shuffle + sample used, datetime printed, math.ceil used</td></tr>
+          <tr><td>Task 4 — Stack Browser</td><td><span class="pts-pill">25</span></td><td>Functions written, push/pop correct, empty stack handled, output is clear</td></tr>
+          <tr><td>Task 5 — Queue Help Desk</td><td><span class="pts-pill">20</span></td><td>deque used, enqueue/dequeue functions work, loop processes all tickets, empty queue handled</td></tr>
+          <tr><td><em>Bonus Challenges</em></td><td><span class="pts-pill bonus">+25</span></td><td>Any of the starred bonus features completed and working</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Code Quality Standards</div>
+      <ul>
+        <li>Variables and functions have clear, descriptive names</li>
+        <li>Each task has comments explaining what the code is doing</li>
+        <li>Output is formatted and easy to read — not raw Python objects</li>
+        <li>Code runs completely from top to bottom without errors</li>
+        <li>Correct data structure used for each task (list vs tuple vs deque)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Discussion / Reflection Questions</div>
+      <ul>
+        <li>When would you choose a tuple over a list? Give a real example.</li>
+        <li>What does LIFO mean, and what real-world situation uses this behavior?</li>
+        <li>What does FIFO mean, and what real-world situation uses this behavior?</li>
+        <li>Why is it better to use <code>collections.deque</code> for a queue instead of a plain list?</li>
+        <li>Name a library not covered in this lesson that you'd like to explore. What might it do?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Quick Reference — All Structures at a Glance</div>
+      <table class="compare-table">
+        <thead><tr><th>Structure</th><th>Ordered?</th><th>Changeable?</th><th>Add</th><th>Remove</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--blue)">List</strong></td><td class="yes">Yes</td><td class="yes">Yes</td><td><code>.append()</code></td><td><code>.pop()</code> / <code>.remove()</code></td><td>General collections of data</td></tr>
+          <tr><td><strong style="color:var(--purple)">Tuple</strong></td><td class="yes">Yes</td><td class="no">No</td><td>—</td><td>—</td><td>Fixed records, coordinates, colors</td></tr>
+          <tr><td><strong style="color:var(--green)">Library</strong></td><td>—</td><td>—</td><td><code>import</code></td><td>—</td><td>Pre-built tools: math, random, dates</td></tr>
+          <tr><td><strong style="color:var(--amber)">Stack (LIFO)</strong></td><td class="yes">Yes</td><td class="yes">Yes</td><td><code>.append()</code></td><td><code>.pop()</code></td><td>Undo, back button, call tracking</td></tr>
+          <tr><td><strong style="color:var(--teal)">Queue (FIFO)</strong></td><td class="yes">Yes</td><td class="yes">Yes</td><td><code>.append()</code></td><td><code>.popleft()</code></td><td>Scheduling, print queues, customer lines</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div><!-- end .page -->
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.topic-pill').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleTask(header) {
+    const body = header.nextElementSibling;
+    const chev = header.querySelector('.task-chev');
+    const open = body.classList.contains('open');
+    body.classList.toggle('open', !open);
+    chev.classList.toggle('open', !open);
+  }
+</script>
+</body>
+</html>
